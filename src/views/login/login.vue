@@ -2,7 +2,7 @@
   <div class="login">
     <div class="left">
       <div class="title">
-        <img src="@/assets/img/login_logo.png" alt="" />
+        <img src="@/assets/img/login_logo.png" alt=""/>
         <span class="titleName">Pasco面面</span>
         <span class="titleLine">|</span>
         <span class="titleName2">用户登录</span>
@@ -61,7 +61,11 @@ export default {
   name: "login",
 };
 </script>
-<style lang="less">
+<style lang="less"> // lang是language的缩写
+* {
+  margin: 0;
+  padding: 0;
+}
 .login {
   /* 弹性盒子布局 */
   display: flex;
@@ -69,7 +73,7 @@ export default {
   justify-content: space-around;
   /* 垂直居中 */
   align-items: center;
-  height: 100%;
+  // height: 100%;
   background: linear-gradient(
     225deg,
     rgba(20, 147, 250, 1),
