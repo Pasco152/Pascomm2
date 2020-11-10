@@ -9,11 +9,11 @@
       </div>
       <el-form class="form" ref="form" :model="form" :rules="rules">
         <!-- prefix-icon是输入框头部图标，后面的值为icon的对应字符串 -->
-        <el-form-item prop="name">
+        <el-form-item prop="phone">
           <el-input
             prefix-icon="el-icon-user"
-            placeholder="请输入用户名"
-            v-model="form.name"
+            placeholder="请输入手机号"
+            v-model="form.phone"
           ></el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -34,7 +34,7 @@
               ></el-input>
             </el-col>
             <el-col :span="8">
-              <img class="code" src="@/assets/img/login_code.jpg" alt />
+              <img class="code" src="http://127.0.0.1/heimamm/public/captcha?type=login" alt />
             </el-col>
           </el-row>
         </el-form-item>
@@ -63,9 +63,10 @@
   </div>
 </template>
 <script>
+import {userLogin} from '../../../api/login'
 import register from './register'
 export default {
-  name: "login",
+  phone: "login",
   components:{
     register
   },
@@ -78,9 +79,13 @@ export default {
         sure: "",
       },
       rules: {
-        name: [{ required: true, message: "请输入用户名", trigger: "change" }],
+        phone: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          // 这里要改下
+          { pattern:/^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/, message: "手机号格式有误", trigger: "blur" },
+        ],
         password: [
-          { required: true, message: "请输入密码", trigger: "change" },
+          { required: true, message: "请输入密码", trigger: "blur" },
           {
             min: 6,
             max: 12,
@@ -89,8 +94,8 @@ export default {
           },
         ],
         code: [
-          { required: true, message: "请输入验证码", trigger: "change" },
-          { min: 4, max: 4, message: "长度在 4 个字符", trigger: "change" },
+          { required: true, message: "请输入验证码", trigger: "blur" },
+          { min: 4, max: 4, message: "长度在 4 个字符", trigger: "blur" },
         ],
         sure: [
           {
@@ -104,9 +109,23 @@ export default {
   },
   methods: {
     submitForm() {
-      window.console.log(this.form)
+      // window.console.log(this.form)
       this.$refs.form.validate((result) => {
-        window.console.log(result)
+        // window.console.log(result)
+        if (result) {
+          // this.$message.sucess('成功')
+          // alert('submit!');
+          userLogin({
+            phone:this.form.phone,
+            password:this.form.password,
+            code:this.form.code
+          }).then(res=>{
+            console.log(res);
+          })
+        } else {
+          this.$message.error('数据格式有误,请检查')
+          return false
+        }
       });
     },
     registerClick() {
