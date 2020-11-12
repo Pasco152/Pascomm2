@@ -63,7 +63,7 @@
   </div>
 </template>
 <script>
-import {userLogin,getCodeUrl} from '../../../api/login'
+import {userLogin,getCodeUrl} from '@/api/login'
 import register from './register'
 import {saveToken} from '@/utils/token'
 export default {
