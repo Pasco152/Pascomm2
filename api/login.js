@@ -12,3 +12,7 @@ export function userLogin(data) {
         data
     })
 }
+
+export function getCodeUrl() {
+    return process.env.VUE_APP_BASEURL+'captcha?type=login'
+}

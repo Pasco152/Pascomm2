@@ -34,7 +34,7 @@
               ></el-input>
             </el-col>
             <el-col :span="8">
-              <img class="code" src="http://127.0.0.1/heimamm/public/captcha?type=login" alt />
+              <img class="code" :src="codeUrl" alt @click="changeCode"/>
             </el-col>
           </el-row>
         </el-form-item>
@@ -63,8 +63,9 @@
   </div>
 </template>
 <script>
-import {userLogin} from '../../../api/login'
+import {userLogin,getCodeUrl} from '../../../api/login'
 import register from './register'
+import {saveToken} from '@/utils/token'
 export default {
   phone: "login",
   components:{
@@ -72,6 +73,7 @@ export default {
   },
   data() {
     return {
+      codeUrl:getCodeUrl(),
       form: {
         phone: "",
         password: "",
@@ -82,7 +84,7 @@ export default {
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
           // 这里要改下
-          { pattern:/^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/, message: "手机号格式有误", trigger: "blur" },
+          { pattern:/^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/, message: "手机号格式有误", trigger: "change" },
         ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
@@ -95,7 +97,7 @@ export default {
         ],
         code: [
           { required: true, message: "请输入验证码", trigger: "blur" },
-          { min: 4, max: 4, message: "长度在 4 个字符", trigger: "blur" },
+          { min: 4, max: 4, message: "长度在 4 个字符", trigger: "change" },
         ],
         sure: [
           {
@@ -115,18 +117,25 @@ export default {
         if (result) {
           // this.$message.sucess('成功')
           // alert('submit!');
-          userLogin({
-            phone:this.form.phone,
-            password:this.form.password,
-            code:this.form.code
-          }).then(res=>{
+          userLogin(this.form).then(res=>{
             console.log(res);
+            if (res.data.code == 200) {
+              saveToken(res.data.token)
+              this.$message.error('登录成功')
+              this.$router.push('/index')
+            } else if(res.data.code == 202) {
+              this.$message.error(res.data.message)
+            }
           })
         } else {
           this.$message.error('数据格式有误,请检查')
           return false
         }
       });
+    },
+    changeCode() {
+      this.codeUrl = 
+        getCodeUrl() + `${Date.now()}`
     },
     registerClick() {
       this.$refs.register.dialogFormVisible = true
